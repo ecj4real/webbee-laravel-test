@@ -98,20 +98,20 @@ class MenuController extends BaseController
         $response = [];
         $menu_items = MenuItem::all()->toArray();
 
-        foreach($menu_items as $item){
-            if(!$item["parent_id"]){
-               array_push($response, $item);
-            }
-            else{
-                $parent_array_index = $this->findObjectByParentId($item["parent_id"], $menu_items);
-                if(!isset($response[$parent_array_index]["children"])){
-                    $response[$parent_array_index]["children"] = [];
-                }
-                array_push($response[$parent_array_index]["Children"], $item);
+        // foreach($menu_items as $item){
+        //     if(!$item["parent_id"]){
+        //        array_push($response, $item);
+        //     }
+        //     else{
+        //         $parent_array_index = $this->findObjectByParentId($item["parent_id"], $menu_items);
+        //         if(!isset($response[$parent_array_index]["children"])){
+        //             $response[$parent_array_index]["children"] = [];
+        //         }
+        //         // array_push($response[$parent_array_index]["Children"], $item);
 
-            }
-        }
-        return $response;
+        //     }
+        // }
+        return $menu_items;
     }
 
     public function findObjectByParentId($id, $array){

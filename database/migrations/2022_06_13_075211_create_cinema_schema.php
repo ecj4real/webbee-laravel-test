@@ -35,9 +35,64 @@ class CreateCinemaSchema extends Migration
      * As a user I want to know where I'm sitting on my ticket
      * As a cinema owner I dont want to configure the seating for every show
      */
+
+     
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('films', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->dateTime('release_date');
+            $table->timestamps();
+        });
+
+        Schema::create('shows', function ($table) {
+            $table->id();
+            $table->dateTime('show_time');
+            $table->timestamps();
+        });
+
+        Schema::create('cinemas', function ($table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('name');
+            $table->string('location');
+            $table->unsignedBigInteger('seats_count');
+            $table->timestamps();
+        });
+
+        Schema::create('seats', function ($table) {
+            $table->id();
+            $table->unsignedBigInteger('cinema_id');
+            $table->unsignedBigInteger('user_id');
+            $table->string('type')->nullable();
+            $table->string('percentage_premium')->nullable();
+            $table->timestamps();
+            $table->foreign('cinema_id')->references('id')->on('cinemas')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+        });
+
+        Schema::create('tickets', function ($table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('seat_id');
+            $table->unsignedBigInteger('film_id')->nullable();
+            $table->unsignedBigInteger('show_id')->nullable();
+            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('seat_id')->references('id')->on('seats')->cascadeOnDelete();
+            $table->foreign('film_id')->references('id')->on('films')->onDelete('set null');
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('set null');
+        });
+
+        Schema::create('payments', function ($table) {
+            $table->id();
+            $table->unsignedBigInteger('ticket_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('ticket_id')->references('id')->on('tickets')->nullOnDelete();
+        });
     }
 
     /**
@@ -47,5 +102,11 @@ class CreateCinemaSchema extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('payments');
+        Schema::dropIfExists('tickets');
+        Schema::dropIfExists('seats');
+        Schema::dropIfExists('cinemas');
+        Schema::dropIfExists('shows');
+        Schema::dropIfExists('films');
     }
 }
