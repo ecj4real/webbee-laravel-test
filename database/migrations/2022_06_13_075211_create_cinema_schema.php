@@ -42,13 +42,14 @@ class CreateCinemaSchema extends Migration
         Schema::create('films', function ($table) {
             $table->id();
             $table->string('name');
-            $table->dateTime('release_date');
+            $table->string('price');
             $table->timestamps();
         });
 
         Schema::create('shows', function ($table) {
             $table->id();
             $table->dateTime('show_time');
+            $table->string('price');
             $table->timestamps();
         });
 
@@ -65,7 +66,7 @@ class CreateCinemaSchema extends Migration
             $table->id();
             $table->unsignedBigInteger('cinema_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('type')->nullable();
+            $table->enum('type', ['vip seat', 'couple seat', 'super vip', 'whatever'])->default('whatever');
             $table->string('percentage_premium')->nullable();
             $table->timestamps();
             $table->foreign('cinema_id')->references('id')->on('cinemas')->cascadeOnDelete();
